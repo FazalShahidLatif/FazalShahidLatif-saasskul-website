@@ -38,6 +38,44 @@ The `LanguageSwitcher` in header handles state. To add translations:
 - For directional changes (RTL), rely on the `dir` attribute set on `#app-root`.
 
 ## 📦 Deployment
-The app is optimized for Cloud Run. Ensure `npm run build` is successful before deployment.
-- **Favicon:** Encoded as SVG data URI in `index.html`.
-- **Title/Meta:** Dynamically updated via `useEffect` in `App.tsx` for SEO optimization.
+
+### GitHub Pages (via GitHub Actions)
+To deploy this project to GitHub Pages:
+1.  **Build Command:** `npm run build`
+2.  **Output Directory:** `dist`
+
+### Recommended GitHub Action Workflow
+Create a file at `.github/workflows/deploy.yml`:
+```yaml
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npm run build
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+```
